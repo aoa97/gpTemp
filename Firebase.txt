@@ -1,0 +1,47 @@
+1) NoSql :
+    - Non-relational database
+    - Real Time Database(Tree-Structured) or Fire Store(Document-Structured)
+
+3) Install & import Firebase 
+        npm install firebase --save
+        import * as firebase from 'firebase'
+
+4) Set firebase configurations into out project
+
+5) Authentication (E-mail & Password, Facebook Login, Google Login, ...)
+    - Sign Up : firebase.auth().createUserWithEmailAndPassword(email, password)
+    - Sign Up With Extra Information : 
+         firebase.auth().createUserWithEmailAndPassword(email, password)
+         .then((res) => {
+            db.collection('users').doc(res.user.uid).set({
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                code: code
+            })
+        })
+    - E-Mail Verification : 
+        firebase.auth().onAuthStateChanged(user => user.sendEmailVerification())
+        Verified or Not ? : firebase.auth().onAuthStateChanged(user => {console.log(user.emailVerified)})
+    - Sign In : firebase.auth().signInWithEmailAndPassword(email, password)
+    - Sign Out : firebase.auth().signOut()
+    - Reset Password : firebase.auth().sendPasswordResetEmail(email)
+    - Update Password : firebase.auth().onAuthStateChanged(user => user.updatePassword(newPassword))
+    - Update Email : firebase.auth().onAuthStateChanged(user => user.updateEmail(newEmail))
+
+6) Fire Store => Real Time Database => Document-Structured => Allows Scaling
+    - Write Data : 
+        With Auto-generated Unique ID : db.collection('users').add({name: 'Ahmed'})
+        With Certain ID : db.collection('users').doc(id).set({ name: 'Ahmed'})
+    - Read Data :
+        db.collection('users').get()
+        .then(snap => snap.docs.forEach(doc => console.log(doc.id, doc.data().name))
+    - Read Where Condition :
+        db.collection('users').where('city', '==', 'cairo').get()
+    - Read in Order :
+        db.collection('users').orderBy('name').get()  //Caps before smalls
+    - Delete Record :
+        db.collection('users').doc(id).delete()
+
+https://firebase.google.com/docs/guides
+https://firebase.google.com/docs/auth/web/manage-users
