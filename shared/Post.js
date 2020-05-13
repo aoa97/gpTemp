@@ -4,6 +4,7 @@ import { Avatar, Icon } from 'react-native-elements'
 import { SliderBox } from "react-native-image-slider-box";
 import Pop from './PopMenu'
 import * as firebase from 'firebase'
+import { secondColor } from './constants';
 
 var firebaseConfig = {
     apiKey: "AIzaSyABjDdiaYm83rEkUsEG-u5aeegZrhNDSKs",
@@ -244,7 +245,7 @@ export default class Post extends React.Component {
             </View>
         )
         return (
-            <View style={{ marginBottom: 10 }}>
+            <View style={{ marginBottom: 30 }}>
                 <View style={{ position: 'absolute', right: 20, top: 20, zIndex: 1 }}>
                     {this.props.postMakerKey === this.currentUser
                         ? <Pop
@@ -457,8 +458,8 @@ const styles = StyleSheet.create({
         //marginHorizontal:5,
         backgroundColor: '#fff',
         flex: 1,
-        borderWidth: 2,
-        borderColor: 'orange',
+        borderWidth: 4,
+        borderColor: secondColor,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 10

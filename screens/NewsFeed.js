@@ -107,7 +107,7 @@ export default class NewsFeed extends React.Component {
                 </ScrollView>
                 <Middle
                     icon='plus' type='font-awesome'
-                    onPress={() => this.navigate('CreatePost', { headingFrom: 'newsFeed' })}
+                    onPress={() => this.navigate('CreatePost')}
                 />
             </View>
         )

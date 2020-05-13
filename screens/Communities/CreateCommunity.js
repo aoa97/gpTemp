@@ -10,6 +10,13 @@ export default class CreateCommunity extends React.Component {
     constructor(props) {
         super(props)
         this.navigate = this.props.navigation.navigate
+        this.selMembers = this.props.navigation.getParam('selMembers') ? this.props.navigation.getParam('selMembers') : []
+        this.currentUser = firebase.auth().currentUser
+        this.currentUserDetails = {
+            avatar: this.currentUser.photoURL,
+            key: this.currentUser.uid,
+            name: this.currentUser.displayName
+        }
         this.db = firebase.database()
         this.state = {
             commName: '',
@@ -51,7 +58,8 @@ export default class CreateCommunity extends React.Component {
             avatar: this.state.commAvatar,
             cover: this.state.commCover,
         }).then(res => {
-            this.props.navigation.getParam('selMembers').forEach(item => {
+            const members = [this.currentUserDetails, ...this.selMembers]
+            members.forEach(item => {
                 this.db.ref(`communities/${res.key}/members/${item.key}`).set({
                     admin: item.key === this.state.adminID ? true : false
                 })
@@ -59,11 +67,9 @@ export default class CreateCommunity extends React.Component {
                     admin: item.key === this.state.adminID ? true : false
                 })
             })
+            this.navigate('CommunityOverview', { communityKey: res.key })
         })
-        this.navigate('CommunitiesList')
     }
-
-
     render() {
         return (
             <View style={{ marginTop: StatusBar.currentHeight }}>
@@ -108,9 +114,10 @@ export default class CreateCommunity extends React.Component {
                     <Icon type='font-awesome' name='plus' size={25} color={'#555'} />
                     <Text style={styles.addMembersTxt}>Add Members</Text>
                 </TouchableOpacity>
+
                 <FlatList
                     style={{ paddingHorizontal: 8, height: 150 }}
-                    data={this.props.navigation.getParam('selMembers')}
+                    data={this.renderMembers ? this.renderMembers : [this.currentUserDetails]}
                     keyExtractor={item => item.key}
                     renderItem={({ item }) => (
                         <View style={styles.list}>
@@ -119,6 +126,7 @@ export default class CreateCommunity extends React.Component {
                         </View>
                     )}
                 />
+
                 <View style={{ alignItems: 'center', marginTop: 25 }}>
                     <Button
                         buttonStyle={{ color: secondColor, width: 285, height: 39, backgroundColor: secondColor }}

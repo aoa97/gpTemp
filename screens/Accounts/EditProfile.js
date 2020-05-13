@@ -10,14 +10,27 @@ export default class EditProfile extends React.Component {
     constructor(props) {
         super(props)
         this.currentUser = firebase.auth().currentUser
+        this.db = firebase.database().ref(`authenticatedUsers/${this.currentUser.uid}`)
         this.state = {
-            avatar: this.currentUser.photoURL,
+            avatar: '',
+            bio: '',
             fullName: this.currentUser.displayName,
             email: this.currentUser.email,
             password: '',
             rePassword: '',
         }
     }
+
+    componentDidMount() {
+        this.db.once('value', child => {
+            this.setState({
+                avatar: child.val().avatar,
+                bio: child.val().bio,
+                fullName: child.val().fullName
+            })
+        })
+    }
+
     url = ''
     pickAvatar = () => {
         let promObject = _launchCameraRoll()
@@ -28,8 +41,12 @@ export default class EditProfile extends React.Component {
         })
     }
 
-    handleSignUP = (avatar, fullName, email, password, rePassword) => {
-        // Form Validation
+    handleEditProfile = (avatar, bio, fullName, email, password, rePassword) => {
+        this.db.update({ avatar, bio, fullName })
+        this.currentUser.updateProfile({
+            displayName: fullName.trim(),
+            photoURL: avatar,
+        })
         if (password !== rePassword) {
             Alert.alert("Password & repassword don't match, please match both fields and try again")
             return
@@ -38,21 +55,23 @@ export default class EditProfile extends React.Component {
             Alert.alert("Please enter at least 6 characters for password")
             return;
         }
-
-        this.currentUser.updateProfile({
-            displayName: fullName.trim(),
-            photoURL: avatar
-        })
-
-        if (email != this.currentUser.email){
-            this.currentUser.updateEmail(email.trim()).catch(err => console.log(err))
-            this.currentUser.sendEmailVerification()
-        }
-
-        if (password.length > 0)
+        if (password.length != 0) {
             this.currentUser.updatePassword(password)
-        
-        this.props.navigation.navigate('SignIn')
+                .then(Alert.alert("Your password changed succefully"))
+        }
+        if (email !== this.currentUser.email) {
+            this.db.update({ email })
+            this.currentUser.updateEmail(email.trim())
+                .then(() => {
+                    firebase.auth().signOut().then(() => {
+                        this.currentUser.sendEmailVerification()
+                        Alert.alert("Your E-mail changed succefully, please sign in again")
+                        return this.props.navigation.navigate('SignIn')
+                    })
+                })
+                .catch(e => Alert.alert(e.message))
+        }
+        this.props.navigation.navigate('MyProfile')
     }
 
     render() {
@@ -60,7 +79,7 @@ export default class EditProfile extends React.Component {
         return (
             <View style={{ marginTop: StatusBar.currentHeight, padding: 20 }}>
                 <View style={{ alignItems: 'center' }}>
-                    <Text h3 style={styles.heading}>Create Account</Text>
+                    <Text h3 style={styles.heading}>Edit Profile</Text>
                     <Avatar
                         rounded
                         showEditButton
@@ -68,6 +87,13 @@ export default class EditProfile extends React.Component {
                         size={'large'}
                         icon={{ name: 'user', type: 'font-awesome' }}
                         source={{ uri: this.state.avatar ? this.state.avatar : profileIcon }}
+                        containerStyle={{ marginBottom: 15 }}
+                    />
+                    <TextInput
+                        style={styles.TextInput}
+                        placeholder="Bio"
+                        value={this.state.bio}
+                        onChangeText={bio => this.setState({ bio })}
                     />
                     <TextInput
                         style={styles.TextInput}
@@ -101,7 +127,7 @@ export default class EditProfile extends React.Component {
                     <Button
                         buttonStyle={styles.button}
                         title="Confirm"
-                        onPress={() => this.handleSignUP(this.state.avatar, this.state.fullName, this.state.email, this.state.password, this.state.rePassword)} />
+                        onPress={() => this.handleEditProfile(this.state.avatar, this.state.bio, this.state.fullName, this.state.email, this.state.password, this.state.rePassword)} />
                 </View>
                 <KeyboardSpacer />
             </View>

@@ -94,17 +94,19 @@ export default class CommunityOverview extends React.Component {
                     {/* <Divider style={{ backgroundColor: '#AAA', marginBottom: 20 }} /> */}
                     {this.state.posts.map(item => {
                         return (
-                            <Post
-                                postImages={item.images}
-                                userName={item.userName}//{item.user}
-                                userAvatar={item.userAvatar}
-                                postText={item.text}
-                                likesNumber={item.likesNumber}
-                                CommentsNumber={item.commentsNumber}
-                                postKey={item.postKey}
-                                navigation={this.props.navigation}
-                                communityKey={this.communityKey} /*'-M07uNj9HbQxc_ich644'{this.props.navigation.getParam("communityKey")}*/
-                            />
+                            <View style={{paddingHorizontal: 5}}>
+                                <Post
+                                    postImages={item.images}
+                                    userName={item.userName}
+                                    userAvatar={item.userAvatar}
+                                    postText={item.text}
+                                    likesNumber={item.likesNumber}
+                                    CommentsNumber={item.commentsNumber}
+                                    postKey={item.postKey}
+                                    navigation={this.props.navigation}
+                                    communityKey={this.communityKey}
+                                />
+                            </View>
                         )
                     })}
                 </ScrollView>
@@ -140,66 +142,3 @@ const styles = StyleSheet.create({
 })
 
 
-/*
-firebase.database().ref('posts')
-//.orderByChild(`communities/${this.communityKey}/key`).equalTo(`${this.communityKey}`)
-.on('value', (dataSnapshot) =>{
-    let promises = [];
-    dataSnapshot.forEach((child) => {
-        var userId = child.val().user
-        let userRef = firebase.database().ref('authenticatedUsers').child(userId);
-        promises.push( userRef.child('fullName').once('value'));
-    })
-    Promise.all(promises).then((snapshots) => {
-        return snapshots.map((userNameSnapshot) => userNameSnapshot.val());
-    })
-    .then((userNames) => {
-        let postsList = [];
-        let index = 0;
-        dataSnapshot.forEach((child) => {
-            postsList.push({
-                image: child.val().image,
-                text: child.val().text,
-                user: userNames[index],
-                likesNumber: child.val().likesNumber,
-                commentsNumber: child.val().commentsNumber,
-                postKey: child.key,
-                userKey: child.val().user
-            })
-            index = index + 1;
-        });
-        this.setState({ posts: postsList.reverse() })
-    })
-})
-firebase.database().ref('posts').orderByChild(`communities/${this.communityKey}/key`)
-.equalTo(`${this.communityKey}`).once('value', snap => {
-    var posts = []
-    snap.forEach(post => {
-        firebase.database().ref('authenticatedUsers').child(post.val().user).once('value', user => {
-            posts.push({
-                postKey: post.key,
-                text: post.val().text,
-                likesNumber: post.val().likesNumber,
-                commentsNumber: post.val().commentsNumber,
-                userName: user.val().fullName,
-                userAvatar: user.val().avatar
-            })
-            this.setState({ posts })
-        })
-    })
-})
-firebase.database().ref('posts').child(this.communityKey).on('value', snap => {
-    var posts = []
-    snap.forEach(child => {
-        posts.push({
-            key: child.key,
-            timestamp: child.val().timestamp,
-            text: child.val().text,
-            image: child.val().image,
-            likesNumber: child.val().likesNumber,
-            commentsNumber: child.val().commentsNumber,
-            user: child.val().user
-        })
-    })
-    this.setState({ posts })
-})*/

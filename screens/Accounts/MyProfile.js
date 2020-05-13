@@ -19,10 +19,11 @@ export default class MyProfile extends React.Component {
     }
 
     componentDidMount() {
-        firebase.auth().onAuthStateChanged(user => {
+        firebase.database().ref(`authenticatedUsers/${this.currentUser.uid}`).on('value', child => {
             this.setState({
-                profName: user.displayName,
-                avatar: user.photoURL
+                avatar: child.val().avatar,
+                profName: child.val().fullName,
+                profBio: child.val().bio
             })
         })
         firebase.database().ref('authenticatedUsers').on('value', snap => {
@@ -40,11 +41,13 @@ export default class MyProfile extends React.Component {
         })
     }
 
-    logout = () => {
-        // firebase.auth().signOut()
-        //     .then(this.props.navigation.navigate('SignIn'))
-        //     .catch(err => Alert.alert(err.toString()))
-        this.props.navigation.navigate('SignIn')
+    logout = async () => {
+        try {
+            await firebase.auth().signOut();
+            this.props.navigation.navigate('SignIn')
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     render() {
@@ -59,46 +62,52 @@ export default class MyProfile extends React.Component {
         }
         return (
             <View style={{ marginTop: StatusBar.currentHeight, alignItems: 'center' }}>
+                {/* Buttons */}
                 <TouchableOpacity style={styles.editProfile} onPress={() => this.props.navigation.navigate('EditProfile')}>
                     <Icon name='settings' type='ionicons' color={secondColor} size={35} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.logout} onPress={this.logout}>
                     <Icon name='log-out' type='entypo' color={secondColor} size={35} />
                 </TouchableOpacity>
-                <View style={styles.profDetails}>
-                    <Avatar rounded size='xlarge' source={{ uri: this.state.avatar }} />
-                    <Text style={styles.profName}>{this.state.profName}</Text>
-                    <Text style={styles.profBio}>{this.state.profBio}</Text>
+
+                {/* Details */}
+                <View style={{ marginTop: 40 }}>
+                    <View style={styles.profDetails}>
+                        <Avatar rounded size='xlarge' source={{ uri: this.state.avatar }} />
+                        <Text style={styles.profName}>{this.state.profName}</Text>
+                        <Text style={styles.profBio}>{this.state.profBio}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.listBox} onPress={() => this.navigate('FriendsList', { friends: this.state.friends })}>
+                        <Text style={styles.boxHeader}>My Friends :-</Text>
+                        <View style={styles.boxAvatar}>
+                            {this.state.friends.map(item => {
+                                return (
+                                    <Avatar
+                                        rounded size={48} source={{ uri: item.avatar }}
+                                        containerStyle={{ borderWidth: 1, borderColor: '#FFF', marginRight: 5 }}
+                                    />
+                                )
+                            })}
+                            {more(this.state.friends)}
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.listBox} onPress={() => this.props.navigation.goBack(null)}>
+                        <Text style={styles.boxHeader}>My Communities :-</Text>
+                        <View style={styles.boxAvatar}>
+                            {this.communities.map(item => {
+                                return (
+                                    <Avatar
+                                        rounded size={48} source={{ uri: item.image }}
+                                        containerStyle={{ borderWidth: 1, borderColor: '#FFF', marginRight: 5 }}
+                                    />
+                                )
+                            })}
+                            {more(this.communities)}
+                        </View>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.listBox} onPress={() => this.navigate('FriendsList', { friends: this.state.friends })}>
-                    <Text style={styles.boxHeader}>My Friends :-</Text>
-                    <View style={styles.boxAvatar}>
-                        {this.state.friends.map(item => {
-                            return (
-                                <Avatar
-                                    rounded size={48} source={{ uri: item.avatar }}
-                                    containerStyle={{ borderWidth: 1, borderColor: '#FFF', marginRight: 5 }}
-                                />
-                            )
-                        })}
-                        {more(this.state.friends)}
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.listBox} onPress={() => this.props.navigation.goBack(null)}>
-                    <Text style={styles.boxHeader}>My Communities :-</Text>
-                    <View style={styles.boxAvatar}>
-                        {this.communities.map(item => {
-                            return (
-                                <Avatar
-                                    rounded size={48} source={{ uri: item.image }}
-                                    containerStyle={{ borderWidth: 1, borderColor: '#FFF', marginRight: 5 }}
-                                />
-                            )
-                        })}
-                        {more(this.communities)}
-                    </View>
-                </TouchableOpacity>
             </View>
+
         )
     }
 }

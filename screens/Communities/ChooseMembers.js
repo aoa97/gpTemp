@@ -34,20 +34,19 @@ export default class ChooseMembers extends React.Component {
 
     selectItem = (user) => {
         this.setState({
-            //selected: !this.state.selected,
-            selMembers: [...this.state.selMembers, { key: user.key, name: user.name, avatar: user.avatar }]
+            selMembers: [...this.state.selMembers]
         })
     }
 
     backScreen = this.props.navigation.getParam('backScreen')
     goBack = () => {
         var members = this.state.selMembers
-        members.push({
+/*         members.push({
             avatar: this.currentUser.photoURL,
             key: this.currentUser.uid,
             name: this.currentUser.displayName
         })
-        if (this.backScreen === "CreateCommunity")
+ */        if (this.backScreen === "CreateCommunity")
             this.navigatate('CreateCommunity', { selMembers: this.state.selMembers })
         else if (this.backScreen === "CommunityMembers")
             this.navigatate('CommunityMembers', { selMembers: this.state.selMembers })

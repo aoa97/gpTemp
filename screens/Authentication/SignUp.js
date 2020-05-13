@@ -111,7 +111,7 @@ export default class SignUp extends React.Component {
                     <Button
                         buttonStyle={styles.button}
                         title="SIGN UP"
-                        onPress={() => this.handleSignUP(this.state.avatar, this.state.fullName, this.state.email, this.state.phone, this.state.username, this.state.password, this.state.rePassword)} />
+                        onPress={() => this.handleSignUP(this.state.avatar, this.state.fullName, this.state.email, this.state.username, this.state.password, this.state.rePassword)} />
                     <Text style={styles.already}>Already have an account ?</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate("SignIn")}>
                         <Text style={styles.SignIn}>SignIn</Text>

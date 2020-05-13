@@ -30,6 +30,8 @@ export default class CreateNewPostScreen extends React.Component {
             communitiesPicked: [],
         }
     }
+
+
     // Life cycle executed before rendering on both client & server side (Will be deprecated soon => Find alternative)
     componentWillMount() {
         firebase.database().ref(`authenticatedUsers/${this.currentUser.uid}/communities`).on('value', snap => {
@@ -55,6 +57,9 @@ export default class CreateNewPostScreen extends React.Component {
             this.setState({ communities })
         })
     }
+
+
+
     chooseComunity(community) {
         const FilteredComunitiesList = this.state.communities.filter(item => item.key !== community.key);
         this.setState({ communities: FilteredComunitiesList });
@@ -97,7 +102,6 @@ export default class CreateNewPostScreen extends React.Component {
             })
                 .then((res) => { this.setState({ key: res.key }) })
                 .then(() => {
-                    alert(this.state.key)
                     this.state.communitiesPicked.forEach((choosenCommunity) => {
                         firebase.database()
                             .ref(`posts/${this.state.key}/communities/${choosenCommunity.key}`)
@@ -132,6 +136,9 @@ export default class CreateNewPostScreen extends React.Component {
             })
         })
     }
+
+
+
     render() {
         return (
             <View style={{ marginTop: StatusBar.currentHeight }}>
@@ -185,7 +192,7 @@ export default class CreateNewPostScreen extends React.Component {
                     }
 
                     <FlatList
-                        style={{ borderColor: 'orange', borderWidth: 1, marginTop: 20, }}
+                        style={{ borderColor: secondColor, borderWidth: 2, marginTop: 20, }}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         data={this.state.communitiesPicked}
@@ -202,7 +209,7 @@ export default class CreateNewPostScreen extends React.Component {
                         }
                     />
                     <FlatList
-                        style={{ borderColor: 'orange', borderWidth: 1, marginTop: 20, }}
+                        style={{ borderColor: secondColor, borderWidth: 2, borderRadius: 3, marginTop: 20, }}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         data={this.state.communities}
@@ -226,6 +233,7 @@ export default class CreateNewPostScreen extends React.Component {
         );
     }
 }
+
 const styles = StyleSheet.create({
     iconsContainer: {
         flexDirection: 'row',
@@ -233,11 +241,11 @@ const styles = StyleSheet.create({
         marginTop: 15,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: '#555'
+        borderColor: secondColor
     },
     iconSeparator: {
         width: 1,
-        backgroundColor: '#555'
+        backgroundColor: secondColor
     },
     icon: {
         margin: 15
