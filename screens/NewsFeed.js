@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, StatusBar, ScrollView } from 'react-native'
+import moment from 'moment'
 import Header from '../shared/Header'
 import Middle from '../shared/FloatingIcons/Middle'
 import Post from '../shared/Post'
@@ -55,7 +56,8 @@ export default class NewsFeed extends React.Component {
                             communities: commNames,
                             userName: user.val().fullName,
                             userAvatar: user.val().avatar,
-                            postMakerKey: user.key
+                            postMakerKey: user.key,
+                            timestamp: post.val().timestamp
                         })
                     }
                     else {
@@ -67,7 +69,8 @@ export default class NewsFeed extends React.Component {
                             communities: commNames,
                             userName: user.val().fullName,
                             userAvatar: user.val().avatar,
-                            postMakerKey: user.key
+                            postMakerKey: user.key,
+                            timestamp: post.val().timestamp
                         })
                     }
                     this.setState({ posts })
@@ -100,7 +103,7 @@ export default class NewsFeed extends React.Component {
                                 navigation={this.props.navigation}
                                 communities={item.communities}
                                 postMakerKey={item.postMakerKey}
-                            //communityKey = {this.communityKey} /*'-M07uNj9HbQxc_ich644'{this.props.navigation.getParam("communityKey")}*/
+                                timestamp={item.timestamp}
                             />
                         )
                     })}

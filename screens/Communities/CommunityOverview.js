@@ -39,6 +39,7 @@ export default class CommunityOverview extends React.Component {
                                 commentsNumber: post.val().commentsNumber,
                                 userName: user.val().fullName,
                                 userAvatar: user.val().avatar,
+                                timestamp: post.val().timestamp
                             })
                         }
                         else {
@@ -49,6 +50,7 @@ export default class CommunityOverview extends React.Component {
                                 commentsNumber: post.val().commentsNumber,
                                 userName: user.val().fullName,
                                 userAvatar: user.val().avatar,
+                                timestamp: post.val().timestamp
                             })
                         }
                         this.setState({ posts })
@@ -105,6 +107,7 @@ export default class CommunityOverview extends React.Component {
                                     postKey={item.postKey}
                                     navigation={this.props.navigation}
                                     communityKey={this.communityKey}
+                                    timestamp={item.timestamp}
                                 />
                             </View>
                         )

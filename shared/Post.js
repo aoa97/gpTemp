@@ -5,6 +5,7 @@ import { SliderBox } from "react-native-image-slider-box";
 import Pop from './PopMenu'
 import * as firebase from 'firebase'
 import { secondColor } from './constants';
+import moment from 'moment';
 
 var firebaseConfig = {
     apiKey: "AIzaSyABjDdiaYm83rEkUsEG-u5aeegZrhNDSKs",
@@ -36,12 +37,16 @@ export default class Post extends React.Component {
             editCommentKey: '',
         }
     }
+
     componentDidMount() {
         this.db.ref('posts').child(this.props.postKey).child('likers').orderByChild("user").equalTo(firebase.auth().currentUser.uid)
             .once("value", snapshot => {
                 if (snapshot.exists()) { this.setState(prevState => ({ liked: !prevState.liked })) }
             });
     }
+
+
+
     setCommentModalVisible(visible) { this.setState({ commentsModalVisible: visible }); }
     setLikersModalVisible(visible) { this.setState({ likersModalVisible: visible }); }
     setEditCommentModalUnVisible() { this.setState({ editCommentModalVisible: false }); }
@@ -204,7 +209,23 @@ export default class Post extends React.Component {
             postImages: this.props.postImages
         })
     }
+
+
+
     render() {
+        const renderTimestamp = () => {
+            const current = new Date().getTime()
+            const createdAt = this.props.timestamp
+            if (current - createdAt <= 86400000) {
+                return (
+                    <Text style={styles.timestamp_today}>{moment(createdAt).startOf('minute').fromNow()}</Text>
+                )
+            }
+            else
+                return (
+                    <Text style={styles.timestamp}>{moment(createdAt).calendar()}</Text>
+                )
+        }
         const renderComment = (item) => (
             <View style={{ flexDirection: 'row', borderColor: '#555', borderRadius: 5, borderWidth: 0.5, paddingVertical: 10, paddingHorizontal: 10, marginBottom: 10 }}>
                 <TouchableOpacity>
@@ -244,6 +265,7 @@ export default class Post extends React.Component {
                 </View>
             </View>
         )
+
         return (
             <View style={{ marginBottom: 30 }}>
                 <View style={{ position: 'absolute', right: 20, top: 20, zIndex: 1 }}>
@@ -276,12 +298,16 @@ export default class Post extends React.Component {
                             </TouchableOpacity>
                         )}
                         </View>
+                        {renderTimestamp()}
                     </View>
                     <TouchableOpacity
                         onPress={() => {
                             this.navigate('EditPost', { communityKey: this.props.communityKey, postKey: this.props.postKey, postText: this.props.postText })
                         }}>
-                        <Text style={styles.postText}>{this.props.postText}</Text>
+                        {this.props.postText ? (
+                            <Text style={styles.postText}>{this.props.postText}</Text>
+                        ) : (<View style={{ marginBottom: 10 }} />)}
+
                         {this.props.postImages ?
                             <SliderBox
                                 images={this.props.postImages}
@@ -363,9 +389,7 @@ export default class Post extends React.Component {
                 </Modal>
                 <Modal
                     animationType="slide"
-                    //transparent={true}
                     visible={this.state.editCommentModalVisible}
-                    //onShow={this.editcommentHandler}
                     presentationStyle="formSheet "
                     onRequestClose={() => { this.setEditCommentModalUnVisible(); }}
                 >
@@ -515,5 +539,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 5,
         alignItems: 'center',
+    },
+    timestamp_today: {
+        position: 'relative',
+        left: 140,
+        top: 5
+    },
+    timestamp: {
+        position: 'relative',
+        left: 100,
+        top: 5
     }
 })
