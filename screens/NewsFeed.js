@@ -85,7 +85,7 @@ export default class NewsFeed extends React.Component {
                 <Header
                     center
                     title='Newsfeed'
-                    icon='wechat' type='font-awesome' onPress={() => alert("Left Icon")}
+                    icon='wechat' type='font-awesome' onPress={() => this.navigate('RecentChats')}
                     icon2='th-list' type2='font-awesome' onPress2={() => this.navigate('CommunitiesStack')}
                 />
                 <ScrollView style={{ padding: 5 }}>

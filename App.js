@@ -6,6 +6,7 @@ import AccountsStack from './screens/Accounts/StackAccounts'
 import NewsFeed from './screens/NewsFeed'
 import Welcome from './screens/Welcome'
 import Play from './screens/PlayScreen'
+import RecentChats from './screens/RecentChats'
 
 const appStack = createStackNavigator(
     {
@@ -15,6 +16,7 @@ const appStack = createStackNavigator(
         AccountsStack,
         CommunitiesStack,
         NewsFeed,
+        RecentChats
     },
     {
         headerMode: 'none'

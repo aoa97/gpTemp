@@ -8,6 +8,7 @@ export default class RoomsList extends React.Component {
     constructor(props) {
         super(props);
         var firebaseDB = firebase.database();
+        this.navigate = this.props.navigation.navigate
         this.communityKey = this.props.navigation.getParam('communityKey')
         this.roomsRef = firebaseDB.ref('rooms/' + this.communityKey).orderByChild('name');
         this.state = {
@@ -17,7 +18,7 @@ export default class RoomsList extends React.Component {
     }
 
     openMessages(room) {
-        this.props.navigation.navigate('ChatScreen', {
+        this.navigate('ChatScreen', {
             roomKey: room.key,
             roomName: room.name,
             roomAvatar: room.avatar,
@@ -49,7 +50,7 @@ export default class RoomsList extends React.Component {
                 <Header
                     title="Rooms"
                     icon='plus' type='font-awesome'
-                    onPress={() => this.props.navigation.navigate('CreateRoom', { communityKey: this.communityKey })}
+                    onPress={() => this.navigate('CreateRoom', { communityKey: this.communityKey })}
                 />
                 <FlatList
                     data={this.state.rooms}
@@ -62,10 +63,10 @@ export default class RoomsList extends React.Component {
                                     <TouchableOpacity onPress={() => this.openMessages(item)}>
                                         <Text style={styles.option}>Chat</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => alert('Chatbot')}>
+                                    <TouchableOpacity onPress={() => this.navigate('BotStack')}>
                                         <Text style={styles.option}>Chatbot</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('BubbleStack')}>
+                                    <TouchableOpacity onPress={() => this.navigate('BubbleStack')}>
                                         <Text style={styles.option}>Bubble</Text>
                                     </TouchableOpacity>
                                 </View>
